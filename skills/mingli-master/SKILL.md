@@ -1,6 +1,6 @@
 ---
 name: 星野录
-description: 紫微斗数命盘解读（星野录 Star Fields）：输入生辰信息，精确排盘并生成可视化命盘解读报告（HTML）。融合紫微三合派、中州派和手相互证的方法论，人格诚实、有边界、不装神。当用户提到算命、命盘、紫微斗数、排盘、命理、八字、运势、看命、生辰分析时触发。也适用于用户说「帮我看看命盘」「算一下」「排个盘」「看看运势」的场景。即使用户只是说「帮我分析一下我的性格/事业/感情」，只要上下文暗示需要命理分析，也应该触发。
+description: 紫微斗数命盘解读（星野录 Star Fields），兼可排八字四柱：输入生辰信息，精确排盘并生成可视化命盘解读报告（HTML）。融合紫微三合派、中州派和手相互证的方法论，人格诚实、有边界、不装神。当用户提到算命、命盘、紫微斗数、排盘、命理、八字、运势、看命、生辰分析时触发。也适用于用户说「帮我看看命盘」「算一下」「排个盘」「看看运势」的场景。即使用户只是说「帮我分析一下我的性格/事业/感情」，只要上下文暗示需要命理分析，也应该触发。
 ---
 
 # 星野录 · Star Fields
@@ -24,10 +24,10 @@ description: 紫微斗数命盘解读（星野录 Star Fields）：输入生辰�
 
 ## 依赖
 
-本 skill 依赖 `iztro-py` Python 库进行排盘计算。首次使用前需安装：
+本 skill 依赖 `iztro-py`（紫微排盘）和 `lunar_python`（八字排盘）两个 Python 库。首次使用前需安装：
 
 \`\`\`
-python3 -m pip install iztro-py --user
+python3 -m pip install iztro-py lunar_python --user
 \`\`\`
 
 ## 工作流程
@@ -64,6 +64,7 @@ python3 -m pip install iztro-py --user
 不要一上来就把十二宫全算一遍（那会像流水账）。先问用户**这次最关心哪个方向**：
 - 事业 / 感情 / 财运 / 健康 / 家庭
 - 或进阶问题：**买房择年**、**个人方位**、**两人合盘**
+- 或用户**点名要看八字**（"排八字""看四柱""我的用神是什么"）→ 走八字流程，见下方「八字流程」
 
 确定重点后，解读**围绕它展开**、其余宫位略提即可。有靶心的解读才显专业。
 
@@ -235,6 +236,17 @@ python3 scripts/generate_html.py \\
 - 标注与星盘吻合/矛盾之处
 - 矛盾处说明取舍逻辑
 
+## 八字流程
+
+用户点名要八字时，**不走紫微的第二到第五步**，改走这里。只说"算命""看看命"而没提八字的，仍默认紫微。
+
+1. **信息收集**：同紫微第一步，精确出生时间 + 出生城市尤其重要（时柱靠它）；只接受公历，农历先换算
+2. **排盘**：`python3 scripts/calculate_bazi.py --solar 1995-4-29 --time 10:00 --city 郴州 --gender 女 --output /tmp/bazi.json`
+3. **解读**：先读 `references/bazi_reference.md`，按"**调候 → 格局 → 旺衰**"三步走；调候那一步查 `references/qiongtong_tiaohou.md`
+4. **输出**：直接用文字回答（八字暂不生成 HTML 命盘）
+
+排盘口径已定死在脚本里：23:00 换日、必用真太阳时、起运精确到岁月日、不排神煞、保留十二长生。用户问起"为什么这样排"时，照 `bazi_reference.md` 第一节解释。
+
 ## 参考文件
 
 | 文件                                   | 何时读取                        |
@@ -244,6 +256,8 @@ python3 scripts/generate_html.py \\
 | \`references/quanshu_reference.md\`    | 判断命宫格局、想引古籍赋文时查阅（《紫微斗数全书》要点，含成格条件与改写纪律） |
 | \`references/four_hua_reference.md\`   | 分析四化飞星、算流年/大限运势时查阅        |
 | \`references/extended_modules.md\`     | 用户问买房年份、个人方位、合盘等进阶问题时查阅（含系统边界声明） |
+| \`references/bazi_reference.md\`       | 走八字流程时**先读**——排盘口径、调候/格局/旺衰三步法、《子平真诠》《滴天髓》依据 |
+| \`references/qiongtong_tiaohou.md\`    | 八字定调候时查——《穷通宝鉴》十天干 × 十二月原文速查 |
 
 ## 脚本
 
@@ -253,6 +267,7 @@ python3 scripts/generate_html.py \\
 | \`scripts/generate_html.py\`       | 生成可视化命盘 HTML                 |
 | \`scripts/calculate_horoscope.py\` | 流年四化飞宫——买房择年 / 婚姻择年 / 合盘（别手算） |
 | \`scripts/calculate_bazhai.py\`    | 八宅命卦方位（风水，非紫微；别手算命卦） |
+| \`scripts/calculate_bazi.py\`      | 八字四柱排盘 + 大运（真太阳时、23 点换日；别手算四柱） |
 
 ## 完整示例流程
 

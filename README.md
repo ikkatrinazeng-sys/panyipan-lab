@@ -45,7 +45,7 @@
 
 ```bash
 cp -r skills/mingli-master ~/.claude/skills/
-python3 -m pip install iztro-py --user
+python3 -m pip install iztro-py lunar_python --user
 ```
 
 ## 使用
@@ -87,7 +87,7 @@ skills/mingli-master/
 
 ## 致谢
 
-排盘计算基于开源库 [iztro-py](https://pypi.org/project/iztro-py/)。
+排盘计算基于开源库 [iztro-py](https://pypi.org/project/iztro-py/)。 八字排盘基于 [lunar_python](https://pypi.org/project/lunar_python/)；八字与古籍引文底本见 `references/bazi_reference.md`、`references/quanshu_reference.md`。
 
 ## License
 
