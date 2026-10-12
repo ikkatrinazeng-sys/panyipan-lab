@@ -120,7 +120,7 @@ python3 scripts/calculate_chart.py --solar 1995-4-29 --hour 5 --gender 女 --out
 5. **当前大限**—— 此阶段核心课题与机遇风险
 6. **近三年流年**—— 具体年份的重要节点提示（可选）
 
-解读时参照 \`references/interpretation_guide.md\` 中的风格指南和 \`references/stars_reference.md\` 中的星曜参考。
+解读时参照 \`references/interpretation_guide.md\` 中的风格指南和 \`references/stars_reference.md\` 中的星曜参考；判断格局时查 \`references/quanshu_reference.md\`（《紫微斗数全书》赋文与格局）。
 
 **关键要求：**
 - 解读要有**主见和判断**，不要模棱两可
@@ -241,6 +241,7 @@ python3 scripts/generate_html.py \\
 | ------------------------------------ | --------------------------- |
 | \`references/interpretation_guide.md\` | **每次解读前先读**——定义解读人格、语气、三条铁律和边界原则 |
 | \`references/stars_reference.md\`      | 解读命宫、事业、财运、感情时，查阅相关星曜的解读参考  |
+| \`references/quanshu_reference.md\`    | 判断命宫格局、想引古籍赋文时查阅（《紫微斗数全书》要点，含成格条件与改写纪律） |
 | \`references/four_hua_reference.md\`   | 分析四化飞星、算流年/大限运势时查阅        |
 | \`references/extended_modules.md\`     | 用户问买房年份、个人方位、合盘等进阶问题时查阅（含系统边界声明） |
 
