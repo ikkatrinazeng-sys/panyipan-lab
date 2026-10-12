@@ -1,0 +1,90 @@
+<view class="hero">
+  <view class="hero-seal">星</view>
+  <view class="hero-title">星野录</view>
+  <view class="hero-sub">紫微斗数 · 八字四柱 · 只说真话的命理</view>
+  <view class="hero-desc">填好生辰，排出你的紫微命盘、八字四柱和今年流年。所有计算都在你的手机上完成，信息不会上传。</view>
+</view>
+
+<view wx:if="{{hasLast}}" class="last" bindtap="fillLast">↺ 使用上次填写的信息</view>
+
+<!-- 1 称呼 -->
+<view class="card">
+  <view class="step"><text class="step-no">一</text>怎么称呼你<text class="optional">选填</text></view>
+  <input class="input" placeholder="比如：可欣" value="{{name}}" bindinput="onName" maxlength="12" />
+</view>
+
+<!-- 2 性别 -->
+<view class="card">
+  <view class="step"><text class="step-no">二</text>性别</view>
+  <view class="hint">紫微大限、八字大运的顺逆都和性别有关</view>
+  <view class="seg">
+    <view class="seg-item {{gender === '女' ? 'on' : ''}}" data-v="女" bindtap="pickGender">女</view>
+    <view class="seg-item {{gender === '男' ? 'on' : ''}}" data-v="男" bindtap="pickGender">男</view>
+  </view>
+</view>
+
+<!-- 3 出生日期 -->
+<view class="card">
+  <view class="step"><text class="step-no">三</text>出生日期</view>
+  <view class="seg">
+    <view class="seg-item {{calendar === 'solar' ? 'on' : ''}}" data-v="solar" bindtap="pickCalendar">公历（阳历）</view>
+    <view class="seg-item {{calendar === 'lunar' ? 'on' : ''}}" data-v="lunar" bindtap="pickCalendar">农历（阴历）</view>
+  </view>
+  <view class="hint" wx:if="{{calendar === 'solar'}}">身份证、出生证明上的日期一般是<text class="em">公历</text>，比如「1995年4月29日」</view>
+  <view class="hint" wx:else>家里长辈说的「三月三十」「腊月初八」是<text class="em">农历</text>；闰月请选带「闰」字的月份</view>
+
+  <picker wx:if="{{calendar === 'solar'}}" mode="date" start="1901-01-01" end="{{today}}" value="{{solarDate || '1995-01-01'}}" bindchange="onSolarDate">
+    <view class="field {{solarDate ? '' : 'empty'}}">{{solarDate ? solarDate : '点这里选择 年 / 月 / 日'}}<text class="arrow">›</text></view>
+  </picker>
+  <picker wx:else mode="multiSelector" range="{{lunar.range}}" value="{{lunar.index}}" bindcolumnchange="onLunarColumn" bindchange="onLunarDate">
+    <view class="field {{lunarPicked ? '' : 'empty'}}">{{lunarPicked ? lunar.label : '点这里选择 农历年 / 月 / 日'}}<text class="arrow">›</text></view>
+  </picker>
+</view>
+
+<!-- 4 出生时间 -->
+<view class="card">
+  <view class="step"><text class="step-no">四</text>出生时间</view>
+  <view class="seg">
+    <view class="seg-item {{timeMode === 'exact' ? 'on' : ''}}" data-v="exact" bindtap="pickTimeMode">知道几点几分</view>
+    <view class="seg-item {{timeMode === 'shichen' ? 'on' : ''}}" data-v="shichen" bindtap="pickTimeMode">只知道时辰</view>
+  </view>
+  <view class="hint" wx:if="{{timeMode === 'exact'}}">出生证明上通常有精确到分钟的时间。填<text class="em">北京时间</text>（钟表时间）即可，下面会自动换算成真太阳时</view>
+  <view class="hint" wx:else>只知道「上午九、十点」「巳时」这类说法时选这里。准确度会打折，能问到具体时间最好</view>
+
+  <picker wx:if="{{timeMode === 'exact'}}" mode="time" value="{{time || '12:00'}}" bindchange="onTime">
+    <view class="field {{time ? '' : 'empty'}}">{{time ? time : '点这里选择 时 : 分'}}<text class="arrow">›</text></view>
+  </picker>
+  <picker wx:else mode="selector" range="{{shichenList}}" value="{{shichen < 0 ? 6 : shichen}}" bindchange="onShichen">
+    <view class="field {{shichen >= 0 ? '' : 'empty'}}">{{shichen >= 0 ? shichenList[shichen] : '点这里选择时辰'}}<text class="arrow">›</text></view>
+  </picker>
+</view>
+
+<!-- 5 出生地点 -->
+<view class="card">
+  <view class="step"><text class="step-no">五</text>出生地点</view>
+  <view class="hint">用来做<text class="em">真太阳时校正</text>：全国都用北京时间，但西部的太阳比东部晚升起，同一个钟点在乌鲁木齐要比北京晚两个小时左右，可能差出一个时辰。选到市一级就够</view>
+  <picker mode="region" level="district" value="{{region}}" bindchange="onRegion">
+    <view class="field {{region.length ? '' : 'empty'}}">{{region.length ? region[0] + ' ' + region[1] + ' ' + region[2] : '点这里选择 省 / 市 / 区县'}}<text class="arrow">›</text></view>
+  </picker>
+  <view class="lon" wx:if="{{longitude !== null && !manualLon}}">按 {{longitudeSource}} 东经 {{longitude}}° 校正</view>
+  <view class="link" bindtap="toggleManualLon">{{manualLon ? '收起手动填写' : '海外出生 / 想填精确经度？手动填写'}}</view>
+  <view wx:if="{{manualLon}}" class="manual">
+    <input class="input" type="digit" placeholder="东经度数，如 113.02" value="{{manualLonText}}" bindinput="onManualLon" />
+    <view class="muted">可在地图 App 里长按出生地查看经度。目前只支持东经 70°–140°（中国境内时区）</view>
+  </view>
+</view>
+
+<!-- 预览 + 提交 -->
+<view class="preview" wx:if="{{preview}}">
+  <view>{{preview}}</view>
+  <view class="warn" wx:if="{{previewWarn}}">⚠ {{previewWarn}}</view>
+</view>
+
+<view class="submit-wrap">
+  <button class="submit {{canSubmit ? '' : 'disabled'}}" bindtap="submit">开始排盘</button>
+</view>
+
+<view class="disclaimer">
+  <view>命盘是概率地图，不是判决书。</view>
+  <view>它讲的是倾向，怎么走由你自己决定。</view>
+</view>

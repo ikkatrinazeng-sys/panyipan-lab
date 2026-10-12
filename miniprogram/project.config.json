@@ -1,0 +1,16 @@
+{
+  "description": "星野录 · 紫微斗数 + 八字排盘小程序",
+  "projectname": "xingye-miniprogram",
+  "appid": "touristappid",
+  "compileType": "miniprogram",
+  "libVersion": "3.0.0",
+  "setting": {
+    "es6": true,
+    "enhance": true,
+    "postcss": true,
+    "minified": true,
+    "urlCheck": true,
+    "ignoreDevUnusedFiles": true
+  },
+  "condition": {}
+}
