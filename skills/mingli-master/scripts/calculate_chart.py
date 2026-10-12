@@ -225,11 +225,55 @@ def serialize_palace(palace):
         return {'name': '?', 'error': str(e), 'majorStars': [], 'minorStars': [], 'adjunctStars': []}
 
 
+STEM_PINYIN = dict(zip(['jia', 'yi', 'bing', 'ding', 'wu', 'ji', 'geng', 'xin', 'ren', 'gui'], '甲乙丙丁戊己庚辛壬癸'))
+BRANCH_PINYIN = dict(zip(['zi', 'chou', 'yin', 'mao', 'chen', 'si', 'wu', 'wei', 'shen', 'you', 'xu', 'hai'],
+                         '子丑寅卯辰巳午未申酉戌亥'))
+
+
+def serialize_astrolabe_v05(astrolabe, gender, hour_index, hour_name):
+    """iztro-py 0.5+：属性改为 snake_case 且星曜名为内部 key，改用 to_iztro_dict() 取中文数据。"""
+    d = astrolabe.to_iztro_dict()
+    palaces = []
+    for obj, p in zip(astrolabe.palaces, d['palaces']):
+        dec = obj.decadal
+        palaces.append({
+            'name': p['name'],
+            'heavenlyStem': p['heavenlyStem'],
+            'earthlyBranch': p['earthlyBranch'],
+            'isBodyPalace': bool(p['isBodyPalace']),
+            'isOriginalPalace': bool(p['isOriginalPalace']),
+            'majorStars': [{k: safe_str(s.get(k)) for k in ('name', 'type', 'scope', 'brightness', 'mutagen')} for s in p['majorStars']],
+            'minorStars': [{k: safe_str(s.get(k)) for k in ('name', 'type', 'scope', 'brightness', 'mutagen')} for s in p['minorStars']],
+            'adjunctStars': [{k: safe_str(s.get(k)) for k in ('name', 'type', 'scope', 'brightness', 'mutagen')} for s in p.get('adjectiveStars', [])],
+            'decadal': {
+                'range': list(dec.range),
+                'heavenlyStem': STEM_PINYIN.get(dec.heavenly_stem.replace('Heavenly', ''), dec.heavenly_stem),
+                'earthlyBranch': BRANCH_PINYIN.get(dec.earthly_branch.replace('Earthly', ''), dec.earthly_branch),
+            },
+            'ages': list(obj.ages or []),
+        })
+    return {
+        'gender': gender,
+        'hour_index': hour_index,
+        'hour_name': hour_name,
+        'solarDate': safe_str(d.get('solarDate')),
+        'lunarDate': safe_str(d.get('lunarDate')),
+        'chineseDate': safe_str(d.get('chineseDate')),
+        'rawDates': {'heavenlyStemAndEarthlyBranch': safe_str(d.get('chineseDate'))},
+        'fiveElementsClass': safe_str(d.get('fiveElementsClass')),
+        'soul': safe_str(d.get('soul')),
+        'body': safe_str(d.get('body')),
+        'palaces': palaces,
+    }
+
+
 def serialize_astrolabe(astrolabe, gender, hour_index):
     """序列化整个命盘"""
     hour_names = ['早子时', '丑时', '寅时', '卯时', '辰时', '巳时', '午时',
                   '未时', '申时', '酉时', '戌时', '亥时', '晚子时']
     hour_name = hour_names[hour_index] if 0 <= hour_index <= 12 else f'时辰{hour_index}'
+    if hasattr(astrolabe, 'to_iztro_dict'):
+        return serialize_astrolabe_v05(astrolabe, gender, hour_index, hour_name)
 
     palaces = []
     for p in (getattr(astrolabe, 'palaces', None) or []):
