@@ -185,55 +185,45 @@ details.basis p { margin: 6px 0 0; padding: 8px 10px; background: var(--paper); 
 .dot { width: 8px; height: 8px; border-radius: 50%; flex: none; }
 .dot-plus { background: var(--jade); } .dot-minus { background: var(--cinnabar); } .dot-neutral { background: var(--muted); }
 
-/* 开屏：三圈罗盘（地支·生肖 / 天干 / 八卦）各自转动，中心是今日干支 */
-.splash { min-height: calc(100vh - 48px); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; text-align: center; padding-block: 8px 24px; }
-.sp-eyebrow { margin: 0; display: flex; gap: 12px; font-size: 12px; letter-spacing: .12em; color: var(--muted); font-variant-numeric: tabular-nums; }
-.sp-eyebrow span + span::before { content: "·"; margin-right: 12px; color: var(--line); }
-.dial-wrap { position: relative; width: min(84vw, 340px); aspect-ratio: 1; max-width: 100%; }
-.dial { width: 100%; height: 100%; display: block; }
-.dial text { font-family: var(--display); fill: var(--ink); }
+/* 开场：所长聊天式引导 */
+.splash { min-height: calc(100vh - 48px); display: flex; flex-direction: column; gap: 14px; padding-block: 4px 24px; }
+.chat-head { display: flex; align-items: center; gap: 10px; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
+.avatar { width: 40px; height: 40px; flex: none; display: grid; place-items: center; border-radius: 10px; background: var(--cinnabar); color: var(--sheet);
+  font-family: var(--display); font-size: 20px; transform: rotate(-4deg); }
+.chat-who { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+.chat-who b { font-size: 15px; }
+.chat-who span { font-size: 12px; color: var(--muted); }
+.skip { align-self: center; flex: none; }
+.chat { display: flex; flex-direction: column; gap: 10px; }
+.msg { max-width: 86%; padding: 10px 14px; border-radius: 4px 14px 14px 14px; background: var(--sheet); border: 1px solid var(--line); font-size: 15px; line-height: 1.6; align-self: flex-start; }
+.msg.me { align-self: flex-end; border-radius: 14px 4px 14px 14px; background: var(--cinnabar); color: var(--sheet); border-color: var(--cinnabar); }
+.msg strong { color: var(--cinnabar-d); font-weight: 600; }
+.msg.big { font-family: var(--display); font-size: 22px; line-height: 1.4; border: 0; background: none; padding: 4px 0; }
+.msg.big em { font-style: normal; color: var(--cinnabar); }
+.typing { display: inline-flex; gap: 4px; padding: 14px; }
+.typing i { width: 6px; height: 6px; border-radius: 50%; background: var(--muted); }
 @media (prefers-reduced-motion: no-preference) {
-  .splash.leaving .dial { animation: spin .9s cubic-bezier(.5,0,.2,1) 1; }
-  .splash.leaving { animation: leave .9s ease-in forwards; }
-  .dial-core { animation: breathe 4s ease-in-out infinite; }
+  .msg { animation: pop .28s ease-out; }
+  .typing i { animation: blink 1s infinite; } .typing i:nth-child(2) { animation-delay: .15s; } .typing i:nth-child(3) { animation-delay: .3s; }
+  .chips button { animation: pop .3s ease-out backwards; }
 }
-@keyframes spin { to { transform: rotate(360deg); } }
-@keyframes leave { 60% { opacity: 1; transform: scale(1); } to { opacity: 0; transform: scale(1.06); } }
-@keyframes breathe { 50% { box-shadow: 0 0 0 10px var(--tint); } }
-.dial-core { position: absolute; inset: 34.5%; border-radius: 50%; background: var(--sheet); border: 1.5px solid var(--cinnabar);
-  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; }
-.core-label { font-size: 10px; color: var(--muted); letter-spacing: .2em; }
-.core-gz { font-family: var(--display); font-weight: 700; color: var(--cinnabar); font-size: clamp(13px, 4vw, 16px); line-height: 1.3; writing-mode: horizontal-tb; white-space: pre-line; }
-.core-lunar { font-size: 10px; color: var(--ochre); }
-.sp-title { margin: 6px 0 0; font-family: var(--display); font-size: 34px; letter-spacing: .08em; line-height: 1.1; }
-.sp-title span { display: inline-block; margin-left: 6px; padding: 2px 6px; font-size: 15px; letter-spacing: .1em; vertical-align: middle; color: var(--sheet); background: var(--cinnabar); border-radius: 4px; transform: rotate(-3deg); }
-.sp-tag { margin: 0; color: var(--ochre); font-size: 14px; letter-spacing: .1em; }
-.sp-points { list-style: none; margin: 4px 0 0; padding: 0; display: flex; flex-direction: column; gap: 8px; text-align: left; max-width: 22em; }
-.sp-points li { display: flex; gap: 10px; align-items: center; font-size: 14px; color: var(--ink); }
-.sp-points b { flex: none; width: 24px; height: 24px; display: grid; place-items: center; border: 1.5px solid var(--cinnabar); color: var(--cinnabar); border-radius: 5px; font-family: var(--display); font-size: 13px; }
-.sp-go { margin-top: 6px; max-width: 320px; }
+@keyframes pop { from { transform: translateY(6px); opacity: .3; } }
+@keyframes blink { 50% { opacity: .25; } }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
+.chips button { border: 1px solid var(--cinnabar); color: var(--cinnabar); background: var(--sheet); border-radius: 20px; padding: 9px 16px; font-size: 15px; cursor: pointer; }
+.chips button:hover { background: var(--tint); }
+.chips .go { background: var(--cinnabar); color: var(--sheet); }
 </style>
 
 <div class="wrap" id="app">
-  <section id="splash" class="splash" aria-label="开屏">
-    <p class="sp-eyebrow"><span id="sp-no"></span><span id="sp-jq"></span></p>
-    <div class="dial-wrap">
-      <svg id="dial" class="dial" viewBox="-160 -160 320 320" role="img" aria-label="天干地支罗盘"></svg>
-      <div class="dial-core">
-        <span class="core-label">今日干支</span>
-        <span class="core-gz" id="sp-gz"></span>
-        <span class="core-lunar" id="sp-lunar"></span>
-      </div>
-    </div>
-    <h1 class="sp-title">盘一盘<span>研究所</span></h1>
-    <p class="sp-tag">紫微斗数 × 八字 · 先验盘，再算命</p>
-    <ul class="sp-points">
-      <li><b>验</b>用你经历过的事，先检验这张盘准不准</li>
-      <li><b>诊</b>两套方法各说各的，分歧就直说不确定</li>
-      <li><b>据</b>每一条结论，都能展开看依据</li>
-    </ul>
-    <button type="button" class="btn sp-go" id="sp-go">开始盘一盘</button>
-    <p class="foot">所有计算都在你的手机里完成，生辰信息不会上传</p>
+  <section id="splash" class="splash" aria-label="开场">
+    <header class="chat-head">
+      <div class="avatar" aria-hidden="true">所</div>
+      <div class="chat-who"><b>盘一盘研究所 · 所长</b><span id="sp-today"></span></div>
+      <button type="button" class="link skip" id="sp-skip">跳过，直接排盘</button>
+    </header>
+    <div class="chat" id="chat" aria-live="polite"></div>
+    <div class="chips" id="chips" hidden></div>
   </section>
 
   <section id="form-view" class="wrap" style="padding:0" hidden>
@@ -542,43 +532,42 @@ details.basis p { margin: 6px 0 0; padding: 8px 10px; background: var(--paper); 
   }
 
 
-  // ---------- 开屏 ----------
+  // ---------- 开场：所长聊天 ----------
+  let TOPIC = null; // 用户想研究的方向，决定排盘后先看哪一页
   (function splash() {
-    const svg = $('dial'); const NS = 'http://www.w3.org/2000/svg';
-    const el = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); parent.appendChild(e); return e; };
-    const ring = (cls, r, items, size, color, tick) => {
-      const g = el('g', { class: 'ring ' + cls }, svg);
-      const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      if (!reduce) el('animateTransform', { attributeName: 'transform', type: 'rotate', from: '0 0 0', to: (cls === 'ring-b' ? '-360' : '360') + ' 0 0', dur: { 'ring-a': '120s', 'ring-b': '80s', 'ring-c': '50s' }[cls], repeatCount: 'indefinite' }, g);
-      el('circle', { r, fill: 'none', stroke: 'var(--line)', 'stroke-width': 1 }, g);
-      items.forEach((t, i) => {
-        const ang = (i / items.length) * Math.PI * 2 - Math.PI / 2;
-        const tr = r - size * 0.95;
-        const x = Math.cos(ang) * tr, y = Math.sin(ang) * tr;
-        const tx = el('text', { x, y, 'font-size': size, 'text-anchor': 'middle', 'dominant-baseline': 'central', transform: `rotate(${(i / items.length) * 360} ${x} ${y})`, style: color ? `fill:${color}` : '' }, g);
-        tx.textContent = t;
-        if (tick) { const a2 = ang + Math.PI / items.length; el('line', { x1: Math.cos(a2) * r, y1: Math.sin(a2) * r, x2: Math.cos(a2) * (r - size * 1.9), y2: Math.sin(a2) * (r - size * 1.9), stroke: 'var(--line)', 'stroke-width': 1 }, g); }
+    const t = Engine.today();
+    $('sp-today').textContent = `今日 ${t.year}年 ${t.month}月 ${t.day}日 · ${t.jieqi}`;
+    const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const chat = $('chat'), chips = $('chips');
+    const wait = (ms) => new Promise((r) => setTimeout(r, reduce ? 0 : ms));
+    async function say(html, cls = '') {
+      let dots;
+      if (!reduce) { dots = document.createElement('div'); dots.className = 'msg typing'; dots.innerHTML = '<i></i><i></i><i></i>'; chat.appendChild(dots); await wait(520); dots.remove(); }
+      const m = document.createElement('div'); m.className = 'msg ' + cls; m.innerHTML = html; chat.appendChild(m); await wait(260);
+    }
+    function me(text) { const m = document.createElement('div'); m.className = 'msg me'; m.textContent = text; chat.appendChild(m); }
+    function ask(options) {
+      return new Promise((resolve) => {
+        chips.innerHTML = options.map(([k, t], i) => `<button type="button" data-k="${k}" style="animation-delay:${i * 60}ms" class="${k === 'go' ? 'go' : ''}">${t}</button>`).join('');
+        chips.hidden = false;
+        chips.onclick = (e) => { const b = e.target.closest('button'); if (!b) return; chips.hidden = true; me(b.textContent); resolve(b.dataset.k); };
       });
-      return g;
-    };
-    el('circle', { r: 156, fill: 'var(--sheet)', stroke: 'var(--ochre)', 'stroke-width': 1.5 }, svg);
-    const ZHI = '子丑寅卯辰巳午未申酉戌亥'.split(''), SX = '鼠牛虎兔龙蛇马羊猴鸡狗猪'.split('');
-    ring('ring-a', 152, ZHI.map((z, i) => z + SX[i]), 15, '', true);
-    ring('ring-b', 112, '甲乙丙丁戊己庚辛壬癸'.split(''), 15, 'var(--cinnabar-d)', true);
-    ring('ring-c', 84, '☰☱☲☳☴☵☶☷'.split(''), 14, 'var(--ochre)', false);
-    el('circle', { r: 58, fill: 'none', stroke: 'var(--line)', 'stroke-width': 1, 'stroke-dasharray': '2 4' }, svg);
-    const t = Engine.today(); const d = new Date();
-    $('sp-gz').textContent = `${t.year}年\n${t.month}月\n${t.day}日`;
-    $('sp-lunar').textContent = t.lunar;
-    $('sp-no').textContent = `实验编号 No.${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}`;
-    $('sp-jq').textContent = `节气 · ${t.jieqi}`;
-    $('sp-go').addEventListener('click', () => {
-      const sp = $('splash');
-      const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      const enter = () => { sp.hidden = true; $('form-view').hidden = false; window.scrollTo(0, 0); };
-      if (reduce) return enter();
-      sp.classList.add('leaving'); setTimeout(enter, 880);
-    });
+    }
+    const enter = () => { $('splash').hidden = true; $('form-view').hidden = false; window.scrollTo(0, 0); };
+    $('sp-skip').addEventListener('click', enter);
+    (async () => {
+      await say('算命这件事，<br>我们想<em>先被你检验</em>。', 'big');
+      await say('嗨，我是盘一盘研究所的所长。');
+      await say('我们不说<strong>"你命里有一劫"</strong>，也不卖转运符。');
+      await say('排完盘，我会先问你几件<strong>过去发生的事</strong>。对得上，后面的结论才值得听；对不上，我直说。');
+      await say('今天想研究点什么？');
+      TOPIC = await ask([['self', '我的性格'], ['career', '事业和钱'], ['love', '感情'], ['year', `${new Date().getFullYear()} 年运势`], ['match', '我和 TA 合不合']]);
+      const reply = { self: '好，性格是最容易验证的，先从它开始。', career: '好，事业和钱我会让紫微、八字两派分别给意见。', love: '好，感情这块我会把两派一致和分歧的地方都摊开说。', year: '好，今年的流年四化和干支都会算给你看。', match: '好，先排你的盘，再填 TA 的，我们做一次合盘实验。' }[TOPIC];
+      await say(reply);
+      await say('先花 30 秒，告诉我你的生辰。');
+      await ask([['go', '好，去填写 →']]);
+      await wait(250); enter();
+    })();
   })();
 
   // ---------- 结果页 ----------
@@ -592,7 +581,7 @@ details.basis p { margin: 6px 0 0; padding: 8px 10px; background: var(--paper); 
   const ansKey = () => 'mp_ans_' + R.bazi.text + R.input.gender + R.hourName;
 
   function showResult(r) {
-    R = r; tab = 'verify'; sub = 'bazi'; sel = r.ziwei.palaces.findIndex((p) => p.name === '命宫');
+    R = r; tab = ({ match: 'match', year: 'year' })[TOPIC] || 'verify'; sub = 'bazi'; sel = r.ziwei.palaces.findIndex((p) => p.name === '命宫');
     QS = I.buildQuestions(r); CONSULT = I.consult(r); PR = null;
     ANS = {};
     try { ANS = JSON.parse(localStorage.getItem(ansKey()) || '{}'); } catch (e) {}
