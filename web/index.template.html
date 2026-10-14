@@ -230,6 +230,8 @@ details.basis p { margin: 6px 0 0; padding: 8px 10px; background: var(--paper); 
 .mu-beads { display: flex; gap: 8px; }
 .mu-beads i { width: 12px; height: 12px; border-radius: 50%; border: 1.5px solid var(--wood-d); background: transparent; transition: background .2s; }
 .mu-beads i.on { background: var(--wood); }
+.mu-tone { display: flex; align-items: center; gap: 10px; margin-top: 10px; font-size: 13px; color: var(--muted); }
+.mu-tone .seg button { padding: 6px 14px; font-size: 13px; }
 </style>
 
 <div class="wrap" id="app">
@@ -276,6 +278,12 @@ details.basis p { margin: 6px 0 0; padding: 8px 10px; background: var(--paper); 
     </div>
     <div class="mu-count"><span id="mu-n">0</span> / 9<span class="mu-unit">功德</span></div>
     <div class="mu-beads" id="mu-beads" aria-hidden="true"></div>
+    <div class="mu-tone">
+      <span>音色</span>
+      <div class="seg" id="mu-tone">
+        <button type="button" data-v="a">清脆</button><button type="button" data-v="b">厚实</button><button type="button" data-v="c">寺院</button>
+      </div>
+    </div>
   </section>
 
   <section id="form-view" class="wrap" style="padding:0" hidden>
@@ -593,23 +601,66 @@ details.basis p { margin: 6px 0 0; padding: 8px 10px; background: var(--paper); 
     const WORDS = [['功德 +1', ''], ['杂念 −1', 'minus'], ['焦虑 −1', 'minus'], ['理性 +1', ''], ['玄学 −1', 'minus'], ['耐心 +1', ''], ['内耗 −1', 'minus'], ['清醒 +1', ''], ['心静了', '']];
     let n = 0, sound = true, ctx = null, done = false;
     $('mu-beads').innerHTML = '<i></i>'.repeat(GOAL);
+    // 木鱼声：模态合成。几个按空心木腔比例排列、互不谐和的泛音，各自指数衰减（高频衰减更快），
+    // 再叠一段带通噪声模拟木槌接触的"咔"和空腔气声。预先算好成 AudioBuffer，敲击时直接播放。
+    const TONES = {
+      a: { f: 560, modes: [[1, 1, .085], [2.32, .55, .05], [4.25, .3, .028], [6.8, .12, .016]], noise: [3200, .35, .006], body: [1100, .25, .03], echo: 0 },
+      b: { f: 248, modes: [[1, 1, .21], [1.62, .55, .14], [2.71, .38, .075], [4.1, .2, .04], [5.9, .1, .022]], noise: [1800, .3, .007], body: [620, .45, .06], echo: 0 },
+      c: { f: 272, modes: [[1, 1, .26], [1.62, .5, .17], [2.71, .34, .09], [4.1, .18, .05]], noise: [1600, .26, .008], body: [600, .4, .07], echo: .32 },
+    };
+    let tone = 'b';
+    try { tone = localStorage.getItem('mp_muyu_tone') || 'b'; } catch (e) {}
+    const buffers = {};
+    function synth(key) {
+      const T = TONES[key], sr = ctx.sampleRate, len = Math.floor(sr * (T.echo ? 1.1 : .6));
+      const buf = ctx.createBuffer(1, len, sr), d = buf.getChannelData(0); // eslint-disable-line
+      let seed = 7; const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647) * 2 - 1;
+      // 二阶带通（双二次滤波）用于噪声
+      const bp = (fc, q) => { const w = 2 * Math.PI * fc / sr, al = Math.sin(w) / (2 * q), a0 = 1 + al;
+        return { b0: al / a0, b2: -al / a0, a1: -2 * Math.cos(w) / a0, a2: (1 - al) / a0, x1: 0, x2: 0, y1: 0, y2: 0 }; };
+      const run = (f, x) => { const y = f.b0 * x + f.b2 * f.x2 - f.a1 * f.y1 - f.a2 * f.y2; f.x2 = f.x1; f.x1 = x; f.y2 = f.y1; f.y1 = y; return y; };
+      const click = bp(T.noise[0], 1.2), body = bp(T.body[0], 3.5);
+      const phase = T.modes.map(() => Math.random() * .3);
+      for (let i = 0; i < len; i++) {
+        const t = i / sr;
+        let v = 0;
+        // 起音前 1.5ms 线性上升，避免爆音；音高在开头微微下滑，像木头被压后回弹
+        const att = Math.min(1, t / .0015), glide = 1 + .04 * Math.exp(-t / .012);
+        T.modes.forEach(([ratio, amp, dec], k) => { v += amp * Math.exp(-t / dec) * Math.sin(2 * Math.PI * T.f * ratio * glide * t + phase[k]); });
+        const n = rnd();
+        v += T.noise[1] * Math.exp(-t / T.noise[2]) * run(click, n) * 6;
+        v += T.body[1] * Math.exp(-t / T.body[2]) * run(body, n) * 4;
+        d[i] = v * att * .42;
+      }
+      if (T.echo) { // 两次早期反射 + 一段短混响尾巴
+        const taps = [[Math.floor(sr * .061), T.echo], [Math.floor(sr * .137), T.echo * .55], [Math.floor(sr * .23), T.echo * .3]];
+        for (let i = len - 1; i >= 0; i--) taps.forEach(([dl, g]) => { if (i - dl >= 0) d[i] += d[i - dl] * g; });
+      }
+      let peak = 0; for (let i = 0; i < len; i++) peak = Math.max(peak, Math.abs(d[i]));
+      const fade = Math.floor(sr * .04); // 结尾 40ms 淡出，避免截断的"咔"声
+      for (let i = 0; i < len; i++) d[i] = d[i] / peak * .85 * Math.min(1, (len - i) / fade);
+      return buf;
+    }
     function knock() {
-      if (!sound) return;
-      try {
-        ctx = ctx || new (window.AudioContext || window.webkitAudioContext)();
-        const now = ctx.currentTime;
-        // 木头声：短促的正弦 + 快速衰减，再叠一点高频噪声当"敲击"
-        const o = ctx.createOscillator(), g = ctx.createGain();
-        o.type = 'sine'; o.frequency.setValueAtTime(820, now); o.frequency.exponentialRampToValueAtTime(420, now + .08);
-        g.gain.setValueAtTime(.55, now); g.gain.exponentialRampToValueAtTime(.001, now + .22);
-        o.connect(g).connect(ctx.destination); o.start(now); o.stop(now + .25);
-        const buf = ctx.createBuffer(1, ctx.sampleRate * .03, ctx.sampleRate), d = buf.getChannelData(0);
-        for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / d.length);
-        const ns = ctx.createBufferSource(), ng = ctx.createGain(); ns.buffer = buf; ng.gain.value = .18;
-        ns.connect(ng).connect(ctx.destination); ns.start(now);
-      } catch (e) { /* 浏览器不支持就静音 */ }
+      if (sound) {
+        try {
+          ctx = ctx || new (window.AudioContext || window.webkitAudioContext)();
+          if (ctx.state === 'suspended') ctx.resume();
+          const buf = buffers[tone] || (buffers[tone] = synth(tone));
+          const src = ctx.createBufferSource(); src.buffer = buf;
+          src.playbackRate.value = 1 + (Math.random() - .5) * .03; // 每下略有不同，听起来不像机器
+          src.connect(ctx.destination); src.start();
+        } catch (e) { /* 浏览器不支持就静音 */ }
+      }
       if (navigator.vibrate) try { navigator.vibrate(12); } catch (e) {}
     }
+    (function toneSeg() {
+      const el = $('mu-tone');
+      const paint = () => el.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.v === tone)));
+      el.addEventListener('click', (e) => { const b = e.target.closest('button'); if (!b) return; tone = b.dataset.v; paint();
+        try { localStorage.setItem('mp_muyu_tone', tone); } catch (err) {} const was = sound; sound = true; knock(); sound = was; });
+      paint();
+    })();
     function float(text, cls) {
       const f = document.createElement('div'); f.className = 'mu-float ' + cls; f.textContent = text;
       f.style.left = (42 + Math.random() * 16) + '%';
