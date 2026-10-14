@@ -1,6 +1,6 @@
 <view class="hero">
   <view class="hero-seal">星</view>
-  <view class="hero-title">星野录</view>
+  <view class="hero-title">盘一盘研究所</view>
   <view class="hero-sub">紫微斗数 · 八字四柱 · 只说真话的命理</view>
   <view class="hero-desc">填好生辰，排出你的紫微命盘、八字四柱和今年流年。所有计算都在你的手机上完成，信息不会上传。</view>
 </view>

@@ -46,7 +46,7 @@ function buildSummary(r) {
   const b = r.bazi;
   const z = r.ziwei;
   const lines = [];
-  lines.push(`【星野录排盘】${r.name ? r.name + ' ' : ''}${r.input.gender}`);
+  lines.push(`【盘一盘研究所排盘】${r.name ? r.name + ' ' : ''}${r.input.gender}`);
   lines.push(`公历 ${r.input.solarDate} ${r.input.time}（${r.input.lunarText}）`);
   if (r.correction) lines.push(`真太阳时 ${r.correction.trueSolarTime}（东经 ${r.correction.longitude}°，${r.correction.correctedHour}）`);
   lines.push('');
@@ -117,14 +117,14 @@ Page({
   copySummary() {
     wx.setClipboardData({
       data: buildSummary(this.data.r),
-      success: () => wx.showToast({ title: '已复制，可粘贴给星野录 skill 做解读', icon: 'none', duration: 2500 }),
+      success: () => wx.showToast({ title: '已复制，可粘贴给盘一盘研究所 skill 做解读', icon: 'none', duration: 2500 }),
     });
   },
 
   again() { wx.navigateBack({ fail: () => wx.redirectTo({ url: '/pages/index/index' }) }); },
 
   onShareAppMessage() {
-    return { title: '星野录 · 排一张你的紫微命盘和八字', path: '/pages/index/index' };
+    return { title: '盘一盘研究所 · 排一张你的紫微命盘和八字', path: '/pages/index/index' };
   },
 });
 

@@ -2,7 +2,7 @@ const { compute } = require('../../utils/chart.js');
 const { lookupLongitude, correct, pad } = require('../../utils/solar-time.js');
 const lunarPicker = require('../../utils/lunar-picker.js');
 
-const STORAGE_KEY = 'xingye_last_input';
+const STORAGE_KEY = 'panyipan_last_input';
 
 const SHICHEN_LIST = [
   '早子时 00:00–01:00', '丑时 01:00–03:00', '寅时 03:00–05:00', '卯时 05:00–07:00',
@@ -192,6 +192,6 @@ Page({
   },
 
   onShareAppMessage() {
-    return { title: '星野录 · 排一张你的紫微命盘和八字', path: '/pages/index/index' };
+    return { title: '盘一盘研究所 · 排一张你的紫微命盘和八字', path: '/pages/index/index' };
   },
 });

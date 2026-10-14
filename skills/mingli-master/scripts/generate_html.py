@@ -416,7 +416,7 @@ def generate_html(chart_data, reading_data, output_path):
     <span class="footer-en">A map of probabilities, not a verdict.</span>
     <div class="colophon">
       <span class="brand-seal">星</span>
-      <span class="brand-txt"><b>星野录</b> · Star Fields<br>紫微斗数 · 只说真话的命理</span>
+      <span class="brand-txt"><b>盘一盘研究所</b> · Panyipan Lab<br>紫微斗数 · 只说真话的命理</span>
     </div>
   </div>
 </div>

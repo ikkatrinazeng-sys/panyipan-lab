@@ -110,7 +110,7 @@
         <view class="zw-foot2">{{item.ganzhi}} · {{item.decadal}}</view>
       </view>
       <view class="zw-center">
-        <view class="zw-c-title">星野录</view>
+        <view class="zw-c-title">盘一盘研究所</view>
         <view>{{r.ziwei.fiveElements}}</view>
         <view>命主 {{r.ziwei.soul}} · 身主 {{r.ziwei.body}}</view>
         <view class="muted">{{r.bazi.text}}</view>
