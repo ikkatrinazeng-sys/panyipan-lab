@@ -178,7 +178,22 @@ function compute(input) {
     flights: flights(h.decadal.mutagen),
   };
 
+  // 过去十几年的流年四化与所在大限，供"验盘"出题（从 16 岁起，最多回看 12 年）
+  const birthYear = calc.getFullYear();
+  const history = [];
+  for (let y = Math.max(birthYear + 15, thisYear - 12); y < thisYear; y++) {
+    const hy = a.horoscope(`${y}-7-1`, tIdx);
+    history.push({
+      year: y,
+      ganzhi: hy.yearly.heavenlyStem + hy.yearly.earthlyBranch,
+      flights: flights(hy.yearly.mutagen),
+      decadalPalace: palaces[hy.decadal.index].name,
+    });
+  }
+
   const ziwei = {
+    history,
+    birthYear,
     fiveElements: a.fiveElementsClass,
     soul: a.soul,
     body: a.body,
