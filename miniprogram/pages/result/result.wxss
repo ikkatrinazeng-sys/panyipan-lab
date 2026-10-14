@@ -1,0 +1,281 @@
+.head {
+  padding: 32rpx 32rpx 8rpx;
+}
+.head-name {
+  font-size: 44rpx;
+  font-weight: 600;
+  letter-spacing: 4rpx;
+}
+.head-name .seal {
+  margin-left: 16rpx;
+  vertical-align: middle;
+}
+.warn {
+  margin-top: 8rpx;
+  color: var(--vermil-d);
+  font-size: 24rpx;
+}
+.em {
+  color: var(--vermil-d);
+  margin: 0 4rpx;
+}
+
+.tabs {
+  display: flex;
+  margin: 16rpx 32rpx 0;
+  border-bottom: 2rpx solid var(--line);
+}
+.tab {
+  flex: 1;
+  text-align: center;
+  padding: 20rpx 0;
+  color: var(--muted);
+  font-size: 30rpx;
+}
+.tab.on {
+  color: var(--vermil);
+  font-weight: 600;
+  border-bottom: 6rpx solid var(--vermil);
+}
+
+.note {
+  margin-top: 16rpx;
+}
+.kv {
+  margin: 8rpx 0;
+  font-size: 28rpx;
+}
+.k {
+  display: inline-block;
+  width: 88rpx;
+  color: var(--gold);
+}
+
+/* 四柱表 */
+.bz-row {
+  display: flex;
+  border-bottom: 1rpx dashed var(--line);
+}
+.bz-cell {
+  flex: 1;
+  text-align: center;
+  padding: 12rpx 0;
+}
+.bz-label {
+  flex: 0 0 88rpx;
+  color: var(--gold);
+  font-size: 24rpx;
+}
+.bz-head .bz-cell {
+  color: var(--muted);
+  font-size: 24rpx;
+}
+.big {
+  font-size: 48rpx;
+  font-weight: 600;
+  line-height: 1.3;
+}
+.small {
+  font-size: 24rpx;
+}
+
+/* 五行颜色 */
+.wx-mu { color: #4f7a63; }
+.wx-huo { color: #b5402a; }
+.wx-tu { color: #a8803a; }
+.wx-jin { color: #7d7468; }
+.wx-shui { color: #3d5a80; }
+.bg-mu { background: #4f7a63; }
+.bg-huo { background: #b5402a; }
+.bg-tu { background: #a8803a; }
+.bg-jin { background: #9c9283; }
+.bg-shui { background: #3d5a80; }
+
+.wx-bar {
+  display: flex;
+  align-items: center;
+  margin: 12rpx 0;
+}
+.wx-name {
+  width: 56rpx;
+  font-weight: 600;
+}
+.wx-track {
+  flex: 1;
+  height: 20rpx;
+  background: var(--paper2);
+  border-radius: 10rpx;
+  overflow: hidden;
+}
+.wx-fill {
+  height: 100%;
+  border-radius: 10rpx;
+}
+.wx-n {
+  width: 48rpx;
+  text-align: right;
+  color: var(--muted);
+}
+
+/* 大运 */
+.dy-scroll {
+  white-space: nowrap;
+  margin-top: 16rpx;
+}
+.dy {
+  display: inline-block;
+  width: 140rpx;
+  margin-right: 16rpx;
+  padding: 16rpx 0;
+  text-align: center;
+  border: 2rpx solid var(--line);
+  border-radius: 12rpx;
+  background: var(--paper);
+  vertical-align: top;
+}
+.dy.on {
+  border-color: var(--vermil);
+  background: #fbeee9;
+}
+.dy-gz {
+  font-size: 36rpx;
+  font-weight: 600;
+}
+.dy-age,
+.dy-year {
+  font-size: 22rpx;
+  color: var(--muted);
+}
+.dy-now {
+  margin-top: 4rpx;
+  font-size: 22rpx;
+  color: var(--vermil);
+}
+
+/* 紫微命盘 4×4 */
+.zw {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(4, 210rpx);
+  margin: 24rpx 16rpx 0;
+  border: 2rpx solid var(--gold);
+  background: #fffdf8;
+}
+.zw-cell {
+  position: relative;
+  padding: 8rpx;
+  border: 1rpx solid var(--line);
+  overflow: hidden;
+}
+.zw-cell.soul {
+  box-shadow: inset 0 0 0 3rpx var(--vermil);
+}
+.zw-cell.sel {
+  background: #fbeee9;
+}
+.zw-major {
+  font-size: 24rpx;
+  font-weight: 600;
+  color: var(--vermil-d);
+  line-height: 1.35;
+}
+.zw-empty {
+  font-size: 22rpx;
+  color: var(--muted);
+}
+.zw-minor {
+  font-size: 20rpx;
+  color: var(--muted);
+  line-height: 1.3;
+}
+.zw-foot {
+  position: absolute;
+  left: 8rpx;
+  bottom: 30rpx;
+  font-size: 22rpx;
+}
+.zw-title {
+  color: var(--ink);
+  font-weight: 600;
+}
+.zw-tag {
+  margin-left: 6rpx;
+  padding: 0 6rpx;
+  background: var(--gold);
+  color: #fff;
+  border-radius: 4rpx;
+  font-size: 18rpx;
+}
+.zw-foot2 {
+  position: absolute;
+  left: 8rpx;
+  bottom: 6rpx;
+  font-size: 18rpx;
+  color: var(--muted);
+}
+.zw-center {
+  grid-row: 2 / 4;
+  grid-column: 2 / 4;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border: 1rpx solid var(--line);
+  background: var(--paper);
+  font-size: 24rpx;
+  text-align: center;
+}
+.zw-c-title {
+  font-size: 36rpx;
+  letter-spacing: 8rpx;
+  color: var(--vermil);
+  margin-bottom: 8rpx;
+}
+.legend {
+  margin: 12rpx 32rpx 0;
+}
+
+/* 四化标签 */
+.hua {
+  display: inline-block;
+  margin: 0 4rpx;
+  padding: 0 6rpx;
+  border-radius: 4rpx;
+  color: #fff;
+  font-size: 18rpx;
+  line-height: 28rpx;
+  vertical-align: middle;
+  font-weight: normal;
+}
+.hua-lu { background: #4f7a63; }
+.hua-quan { background: #a8803a; }
+.hua-ke { background: #3d5a80; }
+.hua-ji { background: #b5402a; }
+
+.fl {
+  margin: 12rpx 0;
+  font-size: 28rpx;
+}
+.fl .hua {
+  font-size: 22rpx;
+  line-height: 34rpx;
+  margin-right: 12rpx;
+}
+
+.actions {
+  padding: 16rpx 32rpx 0;
+}
+.btn-primary {
+  background: var(--vermil);
+  color: #fff;
+  border-radius: 12rpx;
+  font-size: 30rpx;
+}
+.btn-ghost {
+  margin-top: 20rpx;
+  background: transparent;
+  color: var(--vermil);
+  border: 2rpx solid var(--vermil);
+  border-radius: 12rpx;
+  font-size: 30rpx;
+}

@@ -1,0 +1,55 @@
+/* 书斋配色：与 skill 生成的 HTML 命盘一致 —— 米白纸感 + 朱砂红 + 赭金 */
+page {
+  --paper: #f6f1e7;
+  --paper2: #efe7d6;
+  --ink: #2b2420;
+  --muted: #8a7d6b;
+  --line: #d9cdb6;
+  --vermil: #b5402a;
+  --vermil-d: #8f2f1e;
+  --gold: #a8803a;
+  --jade: #4f7a63;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "PingFang SC", "Songti SC", "Noto Serif SC", serif;
+  font-size: 28rpx;
+  line-height: 1.6;
+}
+
+.card {
+  margin: 24rpx 32rpx;
+  padding: 32rpx;
+  background: #fffdf8;
+  border: 1rpx solid var(--line);
+  border-radius: 16rpx;
+}
+
+.card-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: var(--vermil-d);
+  letter-spacing: 4rpx;
+  margin-bottom: 16rpx;
+}
+
+.muted {
+  color: var(--muted);
+  font-size: 24rpx;
+}
+
+.seal {
+  display: inline-block;
+  padding: 0 10rpx;
+  border: 2rpx solid var(--vermil);
+  color: var(--vermil);
+  border-radius: 6rpx;
+  font-size: 22rpx;
+  line-height: 36rpx;
+}
+
+.disclaimer {
+  text-align: center;
+  color: var(--muted);
+  font-size: 22rpx;
+  padding: 24rpx 48rpx 64rpx;
+}

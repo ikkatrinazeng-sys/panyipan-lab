@@ -1,0 +1,160 @@
+<view wx:if="{{ready}}">
+  <!-- 头部信息 -->
+  <view class="head">
+    <view class="head-name">{{r.name || '命主'}}<text class="seal">{{r.input.gender}}</text></view>
+    <view class="muted">公历 {{r.input.solarDate}} {{r.input.time}} · {{r.input.lunarText}}</view>
+    <view class="muted" wx:if="{{r.correction}}">真太阳时 {{r.correction.trueSolarTime}} · {{r.correction.correctedHour}}（东经 {{r.correction.longitude}}°，校正 {{correctionMin}} 分钟）</view>
+    <view class="warn" wx:if="{{r.correction && r.correction.crossedBoundary}}">⚠ 校正后从{{r.correction.naiveHour}}变成{{r.correction.correctedHour}}，已按{{r.correction.correctedHour}}排盘</view>
+    <view class="warn" wx:if="{{!r.correction}}">⚠ 未做真太阳时校正，时辰可能有偏差</view>
+  </view>
+
+  <!-- 标签 -->
+  <view class="tabs">
+    <view class="tab {{tab === 'bazi' ? 'on' : ''}}" data-t="bazi" bindtap="switchTab">八字</view>
+    <view class="tab {{tab === 'ziwei' ? 'on' : ''}}" data-t="ziwei" bindtap="switchTab">紫微</view>
+    <view class="tab {{tab === 'year' ? 'on' : ''}}" data-t="year" bindtap="switchTab">{{r.ziwei.yearly.year}}年</view>
+  </view>
+
+  <!-- ========== 八字 ========== -->
+  <view wx:if="{{tab === 'bazi'}}">
+    <view class="card">
+      <view class="card-title">四柱</view>
+      <view class="bz">
+        <view class="bz-row bz-head">
+          <view class="bz-cell bz-label"></view>
+          <view class="bz-cell" wx:for="{{pillars}}" wx:key="label">{{item.label}}</view>
+        </view>
+        <view class="bz-row">
+          <view class="bz-cell bz-label">十神</view>
+          <view class="bz-cell small" wx:for="{{pillars}}" wx:key="label">{{item.shishenGan}}</view>
+        </view>
+        <view class="bz-row">
+          <view class="bz-cell bz-label">天干</view>
+          <view class="bz-cell big wx-{{item.ganKey}}" wx:for="{{pillars}}" wx:key="label">{{item.gan}}</view>
+        </view>
+        <view class="bz-row">
+          <view class="bz-cell bz-label">地支</view>
+          <view class="bz-cell big wx-{{item.zhiKey}}" wx:for="{{pillars}}" wx:key="label">{{item.zhi}}</view>
+        </view>
+        <view class="bz-row">
+          <view class="bz-cell bz-label">藏干</view>
+          <view class="bz-cell small" wx:for="{{pillars}}" wx:key="label">
+            <view wx:for="{{item.hide}}" wx:for-item="h" wx:key="*this">{{h}}</view>
+          </view>
+        </view>
+        <view class="bz-row">
+          <view class="bz-cell bz-label">纳音</view>
+          <view class="bz-cell small" wx:for="{{pillars}}" wx:key="label">{{item.nayin}}</view>
+        </view>
+        <view class="bz-row">
+          <view class="bz-cell bz-label">星运</view>
+          <view class="bz-cell small" wx:for="{{pillars}}" wx:key="label">{{item.xingyun}}</view>
+        </view>
+        <view class="bz-row">
+          <view class="bz-cell bz-label">自坐</view>
+          <view class="bz-cell small" wx:for="{{pillars}}" wx:key="label">{{item.zizuo}}</view>
+        </view>
+      </view>
+      <view class="muted note">星运：日主在各地支的十二长生状态；自坐：各柱天干在本柱地支的状态。不排神煞。</view>
+    </view>
+
+    <view class="card">
+      <view class="card-title">日主与月令</view>
+      <view class="kv"><text class="k">日主</text>{{r.bazi.dayMaster.gan}}（{{r.bazi.dayMaster.wx}}），在月令为「{{r.bazi.dayMaster.yuelingXingyun}}」</view>
+      <view class="kv"><text class="k">月令</text>{{r.bazi.yueling.season}} · {{r.bazi.yueling.zhi}}月 · {{r.bazi.yueling.climate}}</view>
+      <view class="kv"><text class="k">调候</text>{{r.bazi.yueling.tiaohouUrgent === '寒' ? '生于寒月，调候急需火暖' : r.bazi.yueling.tiaohouUrgent === '暖' ? '生于热月，调候急需水润' : '春秋之月，调候不急，以格局为主'}}</view>
+      <view class="kv"><text class="k">节气</text>{{r.bazi.yueling.prevJie}} ～ {{r.bazi.yueling.nextJie}}</view>
+      <view class="warn" wx:if="{{r.bazi.yueling.nearJie}}">⚠ 出生日紧挨节气交接，出生时间差几个小时，月柱就可能不同</view>
+    </view>
+
+    <view class="card">
+      <view class="card-title">五行粗看</view>
+      <view class="wx-bar" wx:for="{{wuxing}}" wx:key="name">
+        <text class="wx-name wx-{{item.key}}">{{item.name}}</text>
+        <view class="wx-track"><view class="wx-fill bg-{{item.key}}" style="width:{{item.pct}}%"></view></view>
+        <text class="wx-n">{{item.n}}</text>
+      </view>
+      <view class="muted note">只数天干和地支本气，仅作粗看。身强身弱要看得令、通根、透干，不能只数个数。</view>
+    </view>
+
+    <view class="card">
+      <view class="card-title">大运</view>
+      <view class="kv">{{r.bazi.qiyun.text}}（{{r.bazi.qiyun.direction}}），交运日 {{r.bazi.qiyun.date}}</view>
+      <scroll-view scroll-x class="dy-scroll">
+        <view class="dy {{item.current ? 'on' : ''}}" wx:for="{{r.bazi.dayun}}" wx:key="startYear">
+          <view class="dy-gz">{{item.ganzhi}}</view>
+          <view class="dy-age">{{item.startAge}}–{{item.endAge}}岁</view>
+          <view class="dy-year">{{item.startYear}}</view>
+          <view class="dy-now" wx:if="{{item.current}}">当前</view>
+        </view>
+      </scroll-view>
+      <view class="muted note">岁数为虚岁。</view>
+    </view>
+  </view>
+
+  <!-- ========== 紫微 ========== -->
+  <view wx:if="{{tab === 'ziwei'}}">
+    <view class="zw">
+      <view wx:for="{{grid}}" wx:key="idx"
+            class="zw-cell {{item.isSoul ? 'soul' : ''}} {{selected.idx === item.idx ? 'sel' : ''}}"
+            style="{{item.style}}" data-i="{{item.idx}}" bindtap="pickPalace">
+        <view class="zw-stars">
+          <view class="zw-major" wx:for="{{item.major}}" wx:for-item="s" wx:key="text">{{s.text}}<text wx:if="{{s.hua}}" class="hua hua-{{s.huaKey}}">{{s.hua}}</text></view>
+          <view class="zw-empty" wx:if="{{item.empty}}">空宫</view>
+          <view class="zw-minor">{{item.minor}}</view>
+        </view>
+        <view class="zw-foot">
+          <text class="zw-title">{{item.title}}</text>
+          <text class="zw-tag" wx:if="{{item.isBody}}">身</text>
+        </view>
+        <view class="zw-foot2">{{item.ganzhi}} · {{item.decadal}}</view>
+      </view>
+      <view class="zw-center">
+        <view class="zw-c-title">盘一盘研究所</view>
+        <view>{{r.ziwei.fiveElements}}</view>
+        <view>命主 {{r.ziwei.soul}} · 身主 {{r.ziwei.body}}</view>
+        <view class="muted">{{r.bazi.text}}</view>
+        <view class="muted">虚岁 {{r.ziwei.nominalAge}}</view>
+      </view>
+    </view>
+    <view class="legend muted">点任意宫位看详情 · 红框为命宫 · <text class="hua hua-lu">禄</text><text class="hua hua-quan">权</text><text class="hua hua-ke">科</text><text class="hua hua-ji">忌</text> 为生年四化</view>
+
+    <view class="card" wx:if="{{selected}}">
+      <view class="card-title">{{selected.title}} · {{selected.ganzhi}}</view>
+      <view class="kv"><text class="k">主星</text><block wx:if="{{selected.empty}}">空宫（借对宫主星来看）</block><block wx:for="{{selected.major}}" wx:key="text">{{item.text}}{{item.hua ? '（化' + item.hua + '）' : ''}}　</block></view>
+      <view class="kv"><text class="k">辅星</text>{{selected.minor || '无'}}</view>
+      <view class="kv"><text class="k">大限</text>{{selected.decadal}} 岁</view>
+      <view class="kv" wx:if="{{selected.isBody}}"><text class="k">身宫</text>人生重心与后天着力点落在这里</view>
+    </view>
+  </view>
+
+  <!-- ========== 今年 ========== -->
+  <view wx:if="{{tab === 'year'}}">
+    <view class="card">
+      <view class="card-title">当前大限 · {{r.ziwei.decadal.ganzhi}}</view>
+      <view class="kv">走在<text class="em">{{decadalPalace}}</text>（{{r.ziwei.decadal.range[0]}}–{{r.ziwei.decadal.range[1]}} 岁），这十年的四化：</view>
+      <view class="fl" wx:for="{{flightsDecadal}}" wx:key="hua">
+        <text class="hua hua-{{item.huaKey}}">{{item.hua}}</text>{{item.star}}化{{item.hua}} → <text class="em">{{item.palace}}</text>
+      </view>
+    </view>
+
+    <view class="card">
+      <view class="card-title">{{r.ziwei.yearly.year}} {{r.ziwei.yearly.ganzhi}}年</view>
+      <view class="kv">流年命宫走到<text class="em">{{yearlyPalace}}</text>，今年的四化：</view>
+      <view class="fl" wx:for="{{flightsYear}}" wx:key="hua">
+        <text class="hua hua-{{item.huaKey}}">{{item.hua}}</text>{{item.star}}化{{item.hua}} → <text class="em">{{item.palace}}</text>
+      </view>
+      <view class="muted note">化禄：增益、机会；化权：掌控、扩张；化科：名声、贵人；化忌：课题、堵点。化忌不是"有劫"，是今年最该用心的地方。</view>
+    </view>
+  </view>
+
+  <!-- 操作 -->
+  <view class="actions">
+    <button class="btn-primary" bindtap="copySummary">复制排盘结果，拿去做详细解读</button>
+    <button class="btn-ghost" bindtap="again">重新填写</button>
+  </view>
+  <view class="disclaimer">
+    <view>排盘口径：23 点换日 · 真太阳时校正 · 起运精确到岁月日 · 不排神煞</view>
+    <view>命盘是概率地图，不是判决书。</view>
+  </view>
+</view>

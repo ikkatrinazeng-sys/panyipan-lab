@@ -1,6 +1,6 @@
 <div align="center">
 
-# 星野录 · 紫微斗数 + 八字 AI 算命 Skill
+# 盘一盘研究所 · 紫微斗数 + 八字 AI 算命 Skill
 
 **Chinese Fortune Telling for Claude Code — Zi Wei Dou Shu & BaZi (Four Pillars)**
 
@@ -10,7 +10,7 @@
 
 <br>
 
-<img src="assets/preview.png" alt="星野录紫微斗数命盘示例" width="620">
+<img src="assets/preview.png" alt="盘一盘研究所紫微斗数命盘示例" width="620">
 
 </div>
 
@@ -22,7 +22,7 @@
 
 它跟市面上的算命工具最大的不同：
 
-> **市面上九成的算命是一门恐惧生意——把话说得神神叨叨、无所不知，用一句"你命里有一劫"套住你，再卖你一个转运的方法。星野录站在它的对立面：算得准的认真算，算不了的直接说算不了。**
+> **市面上九成的算命是一门恐惧生意——把话说得神神叨叨、无所不知，用一句"你命里有一劫"套住你，再卖你一个转运的方法。盘一盘研究所站在它的对立面：算得准的认真算，算不了的直接说算不了。**
 
 ---
 
@@ -79,12 +79,19 @@
 ## 安装
 
 ```bash
-git clone https://github.com/ikkatrinazeng-sys/xingye-ziwei-bazi-fortune-skill.git
-cp -r xingye-ziwei-bazi-fortune-skill/skills/mingli-master ~/.claude/skills/
+git clone https://github.com/ikkatrinazeng-sys/panyipan-lab.git
+cp -r panyipan-lab/skills/mingli-master ~/.claude/skills/
 python3 -m pip install iztro-py lunar_python --user
 ```
 
 ---
+
+## 手机网页版 / 小程序版
+
+不装 Claude Code 也能用：
+
+- **网页版**：下载 [`web/panyipan.html`](web/panyipan.html)，用手机或电脑浏览器直接打开。电子木鱼开场 → 填生辰 → 验盘、会诊、命盘、今年、合盘五个页面，全部本地计算。说明见 [`web/README.md`](web/README.md)
+- **微信小程序版**：用微信开发者工具导入 [`miniprogram/`](miniprogram/) 文件夹，说明见 [`miniprogram/README.md`](miniprogram/README.md)
 
 ## 使用
 
@@ -176,5 +183,5 @@ skills/mingli-master/
 
 <div align="center">
 <br>
-<code>星</code>　星野录 · 紫微斗数 + 八字 AI 算命 Skill
+<code>盘</code>　盘一盘研究所 · 紫微斗数 + 八字 AI 算命 Skill
 </div>
