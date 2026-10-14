@@ -230,8 +230,6 @@ details.basis p { margin: 6px 0 0; padding: 8px 10px; background: var(--paper); 
 .mu-beads { display: flex; gap: 8px; }
 .mu-beads i { width: 12px; height: 12px; border-radius: 50%; border: 1.5px solid var(--wood-d); background: transparent; transition: background .2s; }
 .mu-beads i.on { background: var(--wood); }
-.mu-tone { display: flex; align-items: center; gap: 10px; margin-top: 10px; font-size: 13px; color: var(--muted); }
-.mu-tone .seg button { padding: 6px 14px; font-size: 13px; }
 </style>
 
 <div class="wrap" id="app">
@@ -278,12 +276,6 @@ details.basis p { margin: 6px 0 0; padding: 8px 10px; background: var(--paper); 
     </div>
     <div class="mu-count"><span id="mu-n">0</span> / 9<span class="mu-unit">功德</span></div>
     <div class="mu-beads" id="mu-beads" aria-hidden="true"></div>
-    <div class="mu-tone">
-      <span>音色</span>
-      <div class="seg" id="mu-tone">
-        <button type="button" data-v="a">清脆</button><button type="button" data-v="b">厚实</button><button type="button" data-v="c">寺院</button>
-      </div>
-    </div>
   </section>
 
   <section id="form-view" class="wrap" style="padding:0" hidden>
@@ -601,15 +593,12 @@ details.basis p { margin: 6px 0 0; padding: 8px 10px; background: var(--paper); 
     const WORDS = [['功德 +1', ''], ['杂念 −1', 'minus'], ['焦虑 −1', 'minus'], ['理性 +1', ''], ['玄学 −1', 'minus'], ['耐心 +1', ''], ['内耗 −1', 'minus'], ['清醒 +1', ''], ['心静了', '']];
     let n = 0, sound = true, ctx = null, done = false;
     $('mu-beads').innerHTML = '<i></i>'.repeat(GOAL);
-    // 木鱼声：模态合成。几个按空心木腔比例排列、互不谐和的泛音，各自指数衰减（高频衰减更快），
+    // 木鱼声（浑厚的大木鱼）：模态合成。几个按空心木腔比例排列、互不谐和的泛音，各自指数衰减（高频衰减更快），
     // 再叠一段带通噪声模拟木槌接触的"咔"和空腔气声。预先算好成 AudioBuffer，敲击时直接播放。
     const TONES = {
-      a: { f: 560, modes: [[1, 1, .085], [2.32, .55, .05], [4.25, .3, .028], [6.8, .12, .016]], noise: [3200, .35, .006], body: [1100, .25, .03], echo: 0 },
       b: { f: 248, modes: [[1, 1, .21], [1.62, .55, .14], [2.71, .38, .075], [4.1, .2, .04], [5.9, .1, .022]], noise: [1800, .3, .007], body: [620, .45, .06], echo: 0 },
-      c: { f: 272, modes: [[1, 1, .26], [1.62, .5, .17], [2.71, .34, .09], [4.1, .18, .05]], noise: [1600, .26, .008], body: [600, .4, .07], echo: .32 },
     };
-    let tone = 'b';
-    try { tone = localStorage.getItem('mp_muyu_tone') || 'b'; } catch (e) {}
+    const tone = 'b'; // 浑厚的大木鱼
     const buffers = {};
     function synth(key) {
       const T = TONES[key], sr = ctx.sampleRate, len = Math.floor(sr * (T.echo ? 1.1 : .6));
@@ -654,13 +643,6 @@ details.basis p { margin: 6px 0 0; padding: 8px 10px; background: var(--paper); 
       }
       if (navigator.vibrate) try { navigator.vibrate(12); } catch (e) {}
     }
-    (function toneSeg() {
-      const el = $('mu-tone');
-      const paint = () => el.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.v === tone)));
-      el.addEventListener('click', (e) => { const b = e.target.closest('button'); if (!b) return; tone = b.dataset.v; paint();
-        try { localStorage.setItem('mp_muyu_tone', tone); } catch (err) {} const was = sound; sound = true; knock(); sound = was; });
-      paint();
-    })();
     function float(text, cls) {
       const f = document.createElement('div'); f.className = 'mu-float ' + cls; f.textContent = text;
       f.style.left = (42 + Math.random() * 16) + '%';
